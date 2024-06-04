@@ -133,3 +133,46 @@ a {
 a:hover {
     color: #34299244;
 }
+
+/* 响应 */
+
+@media screen and (max-width: 1020px) {
+    .background {
+        width: 100vw !important;
+        height: 100vh !important;
+        margin-top: 0px !important;
+    }
+    .background > div > div {
+        height: 100vh !important;
+        width: 100vw !important;
+    }
+    .ElainaF {
+        left: calc(50vw - 175.795px) !important;
+    }
+    .ElainaM {
+        margin-top: 20px !important;
+    }
+    #frontS {
+        left: 0 !important;
+    }
+    .infoI {
+        width: fit-content !important;
+        margin-top: 500px;
+    }
+    .infoO {
+        width: fit-content !important;
+    }
+    #info,
+    #society {
+        width: 300px !important;
+    }
+    .infoF {
+        justify-content: unset !important;
+        flex-direction: column;
+        height: 50vh !important;
+        overflow-y: auto;
+    }
+    #society {
+        margin-bottom: 100px !important;
+    }
+}
