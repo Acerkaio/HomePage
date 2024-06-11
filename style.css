@@ -175,4 +175,10 @@ a:hover {
     #society {
         margin-bottom: 100px !important;
     }
+    a {
+        color: #aca3ff !important;
+    }
+    a:hover {
+        color: #d8d8d856 !important;
+    }
 }

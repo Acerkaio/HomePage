@@ -22,8 +22,10 @@ function animationStart() {
 
     setTimeout(() => {
         $('#Minfo').css('display', '');
+        $('#frontS').css('transition', '0s');
+        
         setTimeout(() => {
-            $('#Minfo').css('opacity', '1');
+            $('#infoF').css('opacity', '1');
             $('#infoTtle-1').css('transform', 'translateX(0px)');
             setTimeout(() => {
                 $('#infoTtle-2').css('transform', 'translateX(0px)');
