@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acerkaio's Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --gutter: 15px;
+        }
+
+        .dark-mode {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --primary-color: #3498db;
+        }
+
+        * {
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            z-index: 1000;
+        }
+
+        .main-wrapper {
+            display: flex;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        #main-content {
+            opacity: 0;
+            transform: translateY(20px);
+            flex: 4;
+        }
+
+        .visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .profile-card {
+            background: rgba(var(--primary-color), 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .masonry-gallery {
+            flex: 6;
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+            padding-right: 1rem;
+            column-count: 3;
+            column-gap: var(--gutter);
+        }
+
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: var(--gutter);
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            transform: scale(0.98);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .masonry-item:hover {
+            transform: scale(1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .masonry-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .social-links a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            margin: 0 1rem;
+            position: relative;
+        }
+
+        .social-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: var(--secondary-color);
+            transition: width 0.3s;
+        }
+
+        .social-links a:hover::after {
+            width: 100%;
+        }
+
+        .control-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 25px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @media (max-width: 1200px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .masonry-gallery {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .masonry-gallery {
+                column-count: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="video-container">
+        <video id="intro-video" width="100%" height="100%" autoplay muted playsinline>
+            <source src="20250502_153906987_iOS.MP4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    <div class="control-buttons">
+        <button id="theme-toggle">🌓</button>
+        <button id="lang-toggle">EN/中</button>
+    </div>
+    <div class="main-wrapper">
+        <div id="main-content">
+            <div class="profile-card animate__animated">
+                <img src="avatar.webp" alt="Avatar" class="avatar">
+                <h1 data-lang="en-name">Acerkaio</h1>
+                <p data-lang="location">📍 Jiangxi, China</p>
+                <p data-lang="identity">💻 Oier | 🎓 Student</p>
+                <div class="social-links">
+                    <a href="https://blog.acerkaio.top" data-lang="blog">Blog</a>
+                    <a href="mailto:contact@acerkaio.top" data-lang="contact">Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="masonry-gallery">
+            <div class="masonry-item"><img src="photo1.jpg" alt="Gallery 1"></div>
+            <div class="masonry-item"><img src="photo2.jpg" alt="Gallery 2"></div>
+            <div class="masonry-item"><img src="photo3.jpg" alt="Gallery 3"></div>
+            <div class="masonry-item"><img src="photo4.jpg" alt="Gallery 4"></div>
+            <div class="masonry-item"><img src="photo5.jpg" alt="Gallery 5"></div>
+            <div class="masonry-item"><img src="photo6.jpg" alt="Gallery 6"></div>
+            <div class="masonry-item"><img src="photo14.jpg" alt="Gallery 14"></div>
+            <div class="masonry-item"><img src="photo13.jpg" alt="Gallery 13"></div>
+            <div class="masonry-item"><img src="photo10.jpg" alt="Gallery 10"></div>
+            <div class="masonry-item"><img src="photo7.jpg" alt="Gallery 7"></div>
+            <div class="masonry-item"><img src="photo8.jpg" alt="Gallery 8"></div>
+            <div class="masonry-item"><img src="photo11.jpg" alt="Gallery 11"></div>
+            <!-- <div class="masonry-item"><img src="photo9.jpg" alt="Gallery 9"></div> -->
+            <div class="masonry-item"><img src="photo15.jpg" alt="Gallery 15"></div>
+            <!-- <div class="masonry-item"><img src="photo12.jpg" alt="Gallery 12"></div> -->
+            <div class="masonry-item"><img src="photo16.jpg" alt="Gallery 16"></div>
+            <!-- <div class="masonry-item"><img src="photo17.jpg" alt="Gallery 17"></div> -->
+        </div>
+    </div>
+    <script>
+        const video = document.getElementById('intro-video');
+        const videoContainer = document.getElementById('video-container');
+        const mainContent = document.getElementById('main-content');
+        video.addEventListener('ended', () => {
+            videoContainer.style.display = 'none';
+            mainContent.classList.add('visible');
+            document.querySelector('.profile-card').classList.add('animate__fadeInUp');
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+        const langData = {
+            'en': {
+                'en-name': 'Acerkaio',
+                'location': '📍 Jiangxi, China',
+                'identity': '💻 Oier | 🎓 Student',
+                'blog': 'Blog',
+                'contact': 'Contact'
+            },
+            'zh': {
+                'en-name': 'Shawn Chen',
+                'location': '📍 中国江西',
+                'identity': '💻 算法竞赛选手 | 🎓 学生',
+                'blog': '博客',
+                'contact': '联系'
+            }
+        };
+        let currentLang = 'en';
+        const langToggle = document.getElementById('lang-toggle');
+        langToggle.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            updateLanguage();
+        });
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                const key = el.dataset.lang;
+                el.textContent = langData[currentLang][key];
+            });
+        }
+        // Video Open
+        //  |
+        // \ /
+        //  v
+        setTimeout(() => {
+            videoContainer.style.display = 'none';
+            mainContent.classList.add('visible');
+        }, 1);
+        //  ^
+        // / \
+        //  |
+        setTimeout(() => {
+            if (video.readyState > 3) {
+                videoContainer.style.display = 'none';
+                mainContent.classList.add('visible');
+            }
+        }, 16000);
+        const lazyLoad = () => {
+            const images = document.querySelectorAll('.masonry-item  img');
+            const options = {
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        observer.unobserve(img);
+                    }
+                });
+            }, options);
+            images.forEach(img => {
+                img.dataset.src = img.src;
+                img.src = 'placeholder.jpg';
+                observer.observe(img);
+            });
+        };
+        window.addEventListener('load', lazyLoad);
+        const gallery = document.querySelector('.masonry-gallery');
+        let scrollInterval;
+
+        function startAutoScroll() {
+            scrollInterval = setInterval(() => {
+                if (gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth) {
+                    gallery.scrollLeft = 0;
+                } else {
+                    gallery.scrollLeft += 1;
+                }
+            }, 20);
+        }
+        startAutoScroll();
+    </script>
+</body>
+
+</html>
