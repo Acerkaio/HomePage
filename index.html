@@ -9,7 +9,7 @@
     <style>
         :root {
             --primary-color: #2c3e50;
-            --secondary-color: #3498db;
+            --secondary-color: #675fd4;
             --bg-color: #ffffff;
             --text-color: #333333;
             --gutter: 15px;
@@ -18,7 +18,8 @@
         .dark-mode {
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
-            --primary-color: #3498db;
+            --primary-color: #968fff;
+            --secondary-color: #7a99ff;
         }
 
         * {
@@ -32,6 +33,26 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
+        }
+
+        .page {
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+            background-color: var(--bg-color);
+            overflow: hidden;
+        }
+
+        #page1 {
+            transform: translateY(0);
+            z-index: 2;
+        }
+
+        #page2 {
+            transform: translateY(100%);
+            z-index: 1;
+            padding: 2rem;
         }
 
         #video-container {
@@ -50,17 +71,13 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
+            height: 100vh;
         }
 
         #main-content {
-            opacity: 0;
-            transform: translateY(20px);
+            opacity: 1;
+            transform: translateY(0);
             flex: 4;
-        }
-
-        .visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
         }
 
         .profile-card {
@@ -70,6 +87,66 @@
             margin-bottom: 2rem;
             backdrop-filter: blur(10px);
             position: relative;
+        }
+
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+            padding: 20px;
+        }
+
+        .project-grid.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .page-up-main {
+            transform: translateY(0) !important;
+        }
+
+        .project-card {
+            background: rgba(var(--primary-color), 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(var(--primary-color), 0.1);
+            transform: scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-card:hover {
+            transform: scale(1);
+            box-shadow: 0 15px 30px rgba(var(--primary-color), 0.1);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg,
+                    rgba(var(--primary-color), 0.3),
+                    rgba(var(--secondary-color), 0.1)) border-box;
+            -webkit-mask:
+                linear-gradient(#fff 0 0) padding-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) padding-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
         }
 
         .masonry-gallery {
@@ -94,7 +171,6 @@
         .masonry-item:hover {
             transform: scale(1);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            z-index: 1;
         }
 
         .masonry-item img {
@@ -158,11 +234,24 @@
             }
         }
 
+        /* @keyframes animate__fadeInUp{
+            0% {opacity: 0;}
+            100% {opacity: 1;}
+        } */
+
         .avatar {
             width: 150px;
             height: 150px;
             border-radius: 50%;
             animation: float 3s ease-in-out infinite;
+        }
+
+        .page-up {
+            transform: translateY(-100%) !important;
+        }
+
+        .page-down {
+            transform: translateY(100%) !important;
         }
 
         @media (max-width: 1200px) {
@@ -173,18 +262,27 @@
             .masonry-gallery {
                 column-count: 2;
             }
+
+            .project-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
             .masonry-gallery {
                 column-count: 1;
             }
+
+            .project-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div id="video-container">
+    <div id="video-container" style="display: none;">
         <video id="intro-video" width="100%" height="100%" autoplay muted playsinline>
             <source src="20250502_153906987_iOS.MP4" type="video/mp4">
             Your browser does not support the video tag.
@@ -194,40 +292,114 @@
         <button id="theme-toggle">🌓</button>
         <button id="lang-toggle">EN/中</button>
     </div>
-    <div class="main-wrapper">
-        <div id="main-content">
-            <div class="profile-card animate__animated">
-                <img src="avatar.webp" alt="Avatar" class="avatar">
-                <h1 data-lang="en-name">Acerkaio</h1>
-                <p data-lang="location">📍 Jiangxi, China</p>
-                <p data-lang="identity">💻 Oier | 🎓 Student</p>
-                <div class="social-links">
-                    <a href="https://blog.acerkaio.top" data-lang="blog">Blog</a>
-                    <a href="mailto:contact@acerkaio.top" data-lang="contact">Contact</a>
+
+    <div class="page" id="page1">
+        <div class="main-wrapper">
+            <div id="main-content">
+                <div class="profile-card animate__animated">
+                    <img src="avatar.webp" alt="Avatar" class="avatar">
+                    <h1 data-lang="en-name">Shawn Chen</h1>
+                    <p data-lang="location">📍 Jiangxi, China</p>
+                    <p data-lang="identity">💻 Oier | 🎓 Student</p>
+                    <div class="social-links">
+                        <a href="https://blog.acerkaio.top" data-lang="blog">Blog</a>
+                        <a href="mailto:what667172@163.com" data-lang="contact">Contact</a>
+                    </div>
+                </div>
+            </div>
+            <div class="masonry-gallery">
+                <div class="masonry-item"><img src="photo1.jpg" alt="Gallery 1"></div>
+                <div class="masonry-item"><img src="photo2.jpg" alt="Gallery 2"></div>
+                <div class="masonry-item"><img src="photo3.jpg" alt="Gallery 3"></div>
+                <div class="masonry-item"><img src="photo4.jpg" alt="Gallery 4"></div>
+                <div class="masonry-item"><img src="photo5.jpg" alt="Gallery 5"></div>
+                <div class="masonry-item"><img src="photo6.jpg" alt="Gallery 6"></div>
+                <div class="masonry-item"><img src="photo14.jpg" alt="Gallery 14"></div>
+                <div class="masonry-item"><img src="photo13.jpg" alt="Gallery 13"></div>
+                <div class="masonry-item"><img src="photo10.jpg" alt="Gallery 10"></div>
+                <div class="masonry-item"><img src="photo7.jpg" alt="Gallery 7"></div>
+                <div class="masonry-item"><img src="photo8.jpg" alt="Gallery 8"></div>
+                <div class="masonry-item"><img src="photo11.jpg" alt="Gallery 11"></div>
+                <div class="masonry-item"><img src="photo15.jpg" alt="Gallery 15"></div>
+                <div class="masonry-item"><img src="photo16.jpg" alt="Gallery 16"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第二页 -->
+    <div class="page" id="page2">
+        <div class="project-grid">
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description" data-lang="follow">
+                    follow Acerkaio tks meow
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
+                </div>
+            </div>
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description">
+                    关注Acerkaio谢谢喵
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
+                </div>
+            </div>
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description">
+                    关注Acerkaio谢谢喵
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
+                </div>
+            </div>
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description">
+                    关注Acerkaio谢谢喵
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
+                </div>
+            </div>
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description">
+                    关注Acerkaio谢谢喵
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
+                </div>
+            </div>
+            <div class="project-card animate__animated">
+                <h3>#$ASawda</h3>
+                <div class="project-description">
+                    关注Acerkaio谢谢喵
+                </div>
+                <div class="tech-tags">
+                    <span class="tech-tag">C++</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">HTML</span>
                 </div>
             </div>
         </div>
-        <div class="masonry-gallery">
-            <div class="masonry-item"><img src="photo1.jpg" alt="Gallery 1"></div>
-            <div class="masonry-item"><img src="photo2.jpg" alt="Gallery 2"></div>
-            <div class="masonry-item"><img src="photo3.jpg" alt="Gallery 3"></div>
-            <div class="masonry-item"><img src="photo4.jpg" alt="Gallery 4"></div>
-            <div class="masonry-item"><img src="photo5.jpg" alt="Gallery 5"></div>
-            <div class="masonry-item"><img src="photo6.jpg" alt="Gallery 6"></div>
-            <div class="masonry-item"><img src="photo14.jpg" alt="Gallery 14"></div>
-            <div class="masonry-item"><img src="photo13.jpg" alt="Gallery 13"></div>
-            <div class="masonry-item"><img src="photo10.jpg" alt="Gallery 10"></div>
-            <div class="masonry-item"><img src="photo7.jpg" alt="Gallery 7"></div>
-            <div class="masonry-item"><img src="photo8.jpg" alt="Gallery 8"></div>
-            <div class="masonry-item"><img src="photo11.jpg" alt="Gallery 11"></div>
-            <!-- <div class="masonry-item"><img src="photo9.jpg" alt="Gallery 9"></div> -->
-            <div class="masonry-item"><img src="photo15.jpg" alt="Gallery 15"></div>
-            <!-- <div class="masonry-item"><img src="photo12.jpg" alt="Gallery 12"></div> -->
-            <div class="masonry-item"><img src="photo16.jpg" alt="Gallery 16"></div>
-            <!-- <div class="masonry-item"><img src="photo17.jpg" alt="Gallery 17"></div> -->
-        </div>
     </div>
+
     <script>
+        // 原有视频控制代码
         const video = document.getElementById('intro-video');
         const videoContainer = document.getElementById('video-container');
         const mainContent = document.getElementById('main-content');
@@ -237,24 +409,98 @@
             document.querySelector('.profile-card').classList.add('animate__fadeInUp');
         });
 
+        // 页面滚动控制
+        let isAnimating = false;
+        let currentPage = 1;
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+        const projectGrid = document.querySelector('.project-grid');
+
+        function handleWheel(e) {
+            if (isAnimating) return;
+
+
+            const delta = Math.sign(e.deltaY);
+            if (delta > 0 && currentPage === 1) {
+                isAnimating = true;
+                page1.classList.add('page-up');
+                page2.classList.remove('page-down');
+                page2.classList.add('page-up-main');
+                currentPage = 2;
+                console.log("page-down");
+                setTimeout(() => {
+                    projectGrid.classList.add('visible');
+                    document.querySelectorAll('.project-card').forEach((card, index) => {
+                        card.style.animation = `animate__fadeInUp 0.6s ease ${index * 0.1}s forwards`;
+                    });
+                    isAnimating = false;
+                }, 500);
+            } else if (delta < 0 && currentPage === 2) {
+                isAnimating = true;
+                page1.classList.remove('page-up');
+                page2.classList.add('page-down');
+                page2.classList.remove('page-up-main');
+                currentPage = 1;
+
+                setTimeout(() => {
+
+                    projectGrid.classList.remove('visible');
+                    document.querySelectorAll('.project-card').forEach(card => {
+                        card.style.animation = '';
+                    });
+                    isAnimating = false;
+                }, 500);
+            }
+        }
+
+        // 节流滚动事件
+        const throttle = (func, limit) => {
+            let lastFunc;
+            let lastRan;
+            return function () {
+                const context = this;
+                const args = arguments;
+                if (!lastRan) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                } else {
+                    clearTimeout(lastFunc);
+                    lastFunc = setTimeout(function () {
+                        if ((Date.now() - lastRan) >= limit) {
+                            func.apply(context, args);
+                            lastRan = Date.now();
+                        }
+                    }, limit - (Date.now() - lastRan));
+                }
+            }
+        };
+
+        window.addEventListener('wheel', throttle(handleWheel, 1000));
+
+
+        // 主题切换
         const themeToggle = document.getElementById('theme-toggle');
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
         });
+
+        // 语言切换
         const langData = {
             'en': {
-                'en-name': 'Acerkaio',
+                'en-name': 'Shawn Chen',
                 'location': '📍 Jiangxi, China',
                 'identity': '💻 Oier | 🎓 Student',
                 'blog': 'Blog',
-                'contact': 'Contact'
+                'contact': 'Contact',
+                'follow': 'follow Acerkaio tks meow'
             },
             'zh': {
-                'en-name': 'Shawn Chen',
+                'en-name': 'Acerkaio',
                 'location': '📍 中国江西',
                 'identity': '💻 算法竞赛选手 | 🎓 学生',
                 'blog': '博客',
-                'contact': '联系'
+                'contact': '联系我',
+                'follow': '关注Acerkaio谢谢喵'
             }
         };
         let currentLang = 'en';
@@ -270,25 +516,10 @@
                 el.textContent = langData[currentLang][key];
             });
         }
-        // Video Open
-        //  |
-        // \ /
-        //  v
-        setTimeout(() => {
-            videoContainer.style.display = 'none';
-            mainContent.classList.add('visible');
-        }, 1);
-        //  ^
-        // / \
-        //  |
-        setTimeout(() => {
-            if (video.readyState > 3) {
-                videoContainer.style.display = 'none';
-                mainContent.classList.add('visible');
-            }
-        }, 16000);
+
+        // 图片懒加载
         const lazyLoad = () => {
-            const images = document.querySelectorAll('.masonry-item  img');
+            const images = document.querySelectorAll('.masonry-item img');
             const options = {
                 rootMargin: '0px',
                 threshold: 0.1
@@ -309,9 +540,10 @@
             });
         };
         window.addEventListener('load', lazyLoad);
+
+        // 自动滚动
         const gallery = document.querySelector('.masonry-gallery');
         let scrollInterval;
-
         function startAutoScroll() {
             scrollInterval = setInterval(() => {
                 if (gallery.scrollLeft + gallery.clientWidth >= gallery.scrollWidth) {
