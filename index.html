@@ -1,403 +1,415 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acerkaio's Portfolio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #675fd4;
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --gutter: 15px;
-        }
-
-        .dark-mode {
-            --bg-color: #1a1a1a;
-            --text-color: #ffffff;
-            --primary-color: #968fff;
-            --secondary-color: #7a99ff;
-        }
-
-        * {
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .page {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
-            background-color: var(--bg-color);
-            overflow: hidden;
-        }
-
-        #page1 {
-            transform: translateY(0);
-            z-index: 2;
-        }
-
-        #page2 {
-            transform: translateY(100%);
-            z-index: 1;
-            padding: 2rem;
-        }
-
-        #video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #ffffff;
-            z-index: 1000;
-        }
-
-        .main-wrapper {
-            display: flex;
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            height: 100vh;
-        }
-
-        #main-content {
-            opacity: 1;
-            transform: translateY(0);
-            flex: 4;
-        }
-
-        .profile-card {
-            background: rgba(var(--primary-color), 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease;
-            padding: 20px;
-        }
-
-        .project-grid.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .page-up-main {
-            transform: translateY(0) !important;
-        }
-
-        .project-card {
-            background: rgba(var(--primary-color), 0.05);
-            border-radius: 20px;
-            padding: 2rem;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(var(--primary-color), 0.1);
-            transform: scale(0.95);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .project-card:hover {
-            transform: scale(1);
-            box-shadow: 0 15px 30px rgba(var(--primary-color), 0.1);
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 20px;
-            border: 2px solid transparent;
-            background: linear-gradient(45deg,
-                    rgba(var(--primary-color), 0.3),
-                    rgba(var(--secondary-color), 0.1)) border-box;
-            -webkit-mask:
-                linear-gradient(#fff 0 0) padding-box,
-                linear-gradient(#fff 0 0);
-            mask:
-                linear-gradient(#fff 0 0) padding-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
-
-        .masonry-gallery {
-            flex: 6;
-            height: calc(100vh - 4rem);
-            overflow-y: auto;
-            padding-right: 1rem;
-            column-count: 3;
-            column-gap: var(--gutter);
-        }
-
-        .masonry-item {
-            break-inside: avoid;
-            margin-bottom: var(--gutter);
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            transform: scale(0.98);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .masonry-item:hover {
-            transform: scale(1);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .masonry-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-        }
-
-        .social-links a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            margin: 0 1rem;
-            position: relative;
-        }
-
-        .social-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background: var(--secondary-color);
-            transition: width 0.3s;
-        }
-
-        .social-links a:hover::after {
-            width: 100%;
-        }
-
-        .control-buttons {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 999;
-        }
-
-        button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 25px;
-            background: var(--primary-color);
-            color: white;
-            cursor: pointer;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        /* @keyframes animate__fadeInUp{
-            0% {opacity: 0;}
-            100% {opacity: 1;}
-        } */
-
-        .avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .page-up {
-            transform: translateY(-100%) !important;
-        }
-
-        .page-down {
-            transform: translateY(100%) !important;
-        }
-
-        @media (max-width: 1200px) {
-            .main-wrapper {
-                flex-direction: column;
-            }
-
-            .masonry-gallery {
-                column-count: 2;
-            }
-
-            .project-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .masonry-gallery {
-                column-count: 1;
-            }
-
-            .project-grid {
-                grid-template-columns: 1fr;
-                padding: 10px;
-            }
-        }
-
-        .circular-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .center-avatar {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            border: 3px solid var(--secondary-color);
-            box-shadow: 0 0 30px rgba(var(--secondary-color), 0.4);
-            z-index: 2;
-            position: relative;
-        }
-
-        .orbit {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            animation: orbit-rotate 20s linear infinite;
-        }
-
-        .orbit-item {
-            --total-items: 6;
+<!DOCTYPE html> 
+<html lang="en"> 
+ 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Acerkaio's Portfolio</title> 
+    <script src="https://unpkg.com/css-doodle@0.14.2/css-doodle.min.js"></script>  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">  
+    <style> 
+        :root { 
+            --primary-color: #2c3e50; 
+            --secondary-color: #675fd4; 
+            --bg-color: #ffffff; 
+            --text-color: #333333; 
+            --gutter: 15px; 
+        } 
+ 
+        .dark-mode { 
+            --bg-color: #1a1a1a; 
+            --text-color: #ffffff; 
+            --primary-color: #968fff; 
+            --secondary-color: #7a99ff; 
+        } 
+ 
+        * { 
+            transition: all 0.3s ease; 
+            box-sizing: border-box; 
+        } 
+ 
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+        } 
+ 
+        .page { 
+            position: fixed; 
+            width: 100%; 
+            height: 100vh; 
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1); 
+            background-color: var(--bg-color); 
+            overflow: hidden; 
+        } 
+ 
+        #page1 { 
+            transform: translateY(0); 
+            z-index: 2; 
+        } 
+ 
+        #page2 { 
+            transform: translateY(100%); 
+            z-index: 1; 
+            padding: 2rem; 
+        } 
+ 
+        #video-container { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: #ffffff; 
+            z-index: 1000; 
+        } 
+ 
+        .main-wrapper { 
+            display: flex; 
+            gap: 2rem; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 2rem; 
+            height: 100vh; 
+        } 
+ 
+        #main-content { 
+            opacity: 1; 
+            transform: translateY(0); 
+            flex: 4; 
+        } 
+ 
+        .profile-card { 
+            background: rgba(var(--primary-color), 0.1); 
+            border-radius: 15px; 
+            padding: 2rem; 
+            margin-bottom: 2rem; 
+            backdrop-filter: blur(10px); 
+            position: relative; 
+        } 
+ 
+        .project-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 2rem; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            opacity: 0; 
+            transform: translateY(50px); 
+            transition: all 0.8s ease; 
+            padding: 20px; 
+        } 
+ 
+        .project-grid.visible  { 
+            opacity: 1; 
+            transform: translateY(0); 
+        } 
+ 
+        .page-up-main { 
+            transform: translateY(0) !important; 
+        } 
+ 
+        .project-card { 
+            background: rgba(var(--primary-color), 0.05); 
+            border-radius: 20px; 
+            padding: 2rem; 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(var(--primary-color), 0.1); 
+            transform: scale(0.95); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            cursor: pointer; 
+            position: relative; 
+        } 
+ 
+        .project-card:hover { 
+            transform: scale(1); 
+            box-shadow: 0 15px 30px rgba(var(--primary-color), 0.1); 
+        } 
+ 
+        .project-card::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            border-radius: 20px; 
+            border: 2px solid transparent; 
+            background: linear-gradient(45deg, 
+                    rgba(var(--primary-color), 0.3), 
+                    rgba(var(--secondary-color), 0.1)) border-box; 
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) padding-box, 
+                linear-gradient(#fff 0 0); 
+            mask: 
+                linear-gradient(#fff 0 0) padding-box, 
+                linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+        } 
+ 
+        .masonry-gallery { 
+            flex: 6; 
+            height: calc(100vh - 4rem); 
+            overflow-y: auto; 
+            padding-right: 1rem; 
+            column-count: 3; 
+            column-gap: var(--gutter); 
+        } 
+ 
+        .masonry-item { 
+            break-inside: avoid; 
+            margin-bottom: var(--gutter); 
+            position: relative; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            transform: scale(0.98); 
+            transition: transform 0.3s, box-shadow 0.3s; 
+        } 
+ 
+        .masonry-item:hover { 
+            transform: scale(1); 
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); 
+        } 
+ 
+        .masonry-item img { 
+            width: 100%; 
+            height: auto; 
+            border-radius: 12px; 
+            display: block; 
+        } 
+ 
+        .social-links a { 
+            color: var(--secondary-color); 
+            text-decoration: none; 
+            margin: 0 1rem; 
+            position: relative; 
+        } 
+ 
+        .social-links a::after { 
+            content: ''; 
+            position: absolute; 
+            width: 0; 
+            height: 2px; 
+            bottom: -5px; 
+            left: 0; 
+            background: var(--secondary-color); 
+            transition: width 0.3s; 
+        } 
+ 
+        .social-links a:hover::after { 
+            width: 100%; 
+        } 
+ 
+        .control-buttons { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            display: flex; 
+            gap: 10px; 
+            z-index: 999; 
+        } 
+ 
+        button { 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: 25px; 
+            background: var(--primary-color); 
+            color: white; 
+            cursor: pointer; 
+        } 
+ 
+        @keyframes float { 
+            0% { 
+                transform: translateY(0px); 
+            } 
+ 
+            50% { 
+                transform: translateY(-20px); 
+            } 
+ 
+            100% { 
+                transform: translateY(0px); 
+            } 
+        } 
+ 
+        .avatar { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+            animation: float 3s ease-in-out infinite; 
+        } 
+ 
+        .page-up { 
+            transform: translateY(-100%) !important; 
+        } 
+ 
+        .page-down { 
+            transform: translateY(100%) !important; 
+        } 
+ 
+        @media (max-width: 1200px) { 
+            .main-wrapper { 
+                flex-direction: column; 
+            } 
+ 
+            .masonry-gallery { 
+                column-count: 2; 
+            } 
+ 
+            .project-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+            } 
+        } 
+ 
+        @media (max-width: 768px) { 
+            .masonry-gallery { 
+                column-count: 1; 
+            } 
+ 
+            .project-grid { 
+                grid-template-columns: 1fr; 
+                padding: 10px; 
+            } 
+        } 
+ 
+        .circular-container { 
+            position: relative; 
+            width: 100%; 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden; 
+        } 
+ 
+        .center-avatar { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            border: 3px solid var(--secondary-color); 
+            box-shadow: 0 0 30px rgba(var(--secondary-color), 0.4); 
+            z-index: 2; 
+            position: relative; 
+        } 
+ 
+        .orbit { 
+            position: absolute; 
+            width: 600px; 
+            height: 600px; 
+            animation: orbit-rotate 20s linear infinite; 
+        } 
+ 
+        .orbit-item { 
+            --total-items: 6; 
             --radius: 250px; 
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            left: calc(50% - 30px); 
-            top: calc(50% - 30px);
+            position: absolute; 
+            width: 60px; 
+            height: 60px; 
+ 
+            left: 50%; 
+            top: 50%; 
             transform: 
-                rotate(calc(360deg / var(--total-items) * var(--i)))
-                translateX(var(--radius))
-                rotate(calc(-360deg / var(--total-items) * var(--i)));
-            animation: icon-float 3s ease-in-out infinite;
-        }
-
-        .tech-icon {
-            --total-items: 6;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 5px var(--secondary-color));
-            transform: rotate(calc(360deg / var(--total-items) * (4 + var(--idx)) + 30deg));
-            transition: all 0.3s ease;
-        }
-
-        .tech-icon:hover {
-            transform: 
-                scale(1.2)
-                rotate(calc(360deg / var(--total-items) * (4 + var(--idx))));;
-            filter: drop-shadow(0 0 15px var(--secondary-color));
-        }
-
-        @keyframes orbit-rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        @keyframes icon-float {
-            0%, 100% { transform: 
+                translate(-50%, -50%) 
                 rotate(calc(360deg / var(--total-items) * var(--i))) 
-                translateX(var(--radius))
-                rotate(calc(-360deg / var(--total-items) * var(--i))); 
-            }
-            50% { transform: 
-                rotate(calc(360deg / var(--total-items) * var(--i))) 
-                translateX(calc(var(--radius) * 0.9)) 
-                rotate(calc(-360deg / var(--total-items) * var(--i))); 
-            }
-        }
-
-        @media (max-width: 768px) {
-            .orbit { width: 400px; height: 400px; }
-            .orbit-item { --radius: 150px; }
-        }
-
-        #video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #ffffff;
-            z-index: 1000;
-        }
-
-        .main-wrapper {
-            display: flex;
-            gap: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-            height: 100vh;
-        }
-
-        .profile-card {
-            background: rgba(var(--primary-color), 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        .avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            animation: float 3s ease-in-out infinite;
-        }
-
-    </style>
-</head>
+                translateX(var(--radius)) 
+                rotate(calc(-1 * (360deg / var(--total-items) * var(--i)) - 90deg)); 
+ 
+            animation: icon-float 3s ease-in-out infinite; 
+        } 
+ 
+ 
+        .tech-icon { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            filter: drop-shadow(0 0 5px var(--secondary-color)); 
+            transition: all 0.3s ease; 
+        } 
+ 
+        .tech-icon:hover { 
+            transform: scale(1.2) rotate(15deg); 
+            filter: drop-shadow(0 0 15px var(--secondary-color)); 
+        } 
+ 
+        @keyframes orbit-rotate { 
+            from { 
+                transform: rotate(0deg); 
+            } 
+ 
+            to { 
+                transform: rotate(360deg); 
+            } 
+        } 
+ 
+        @keyframes icon-float { 
+            0%, 100% { 
+                transform: 
+                    translate(-50%, -50%) 
+                    rotate(calc(360deg / var(--total-items) * var(--i))) 
+                    translateX(var(--radius)) 
+                    rotate(calc(-1 * (360deg / var(--total-items) * var(--i) - 90deg))); 
+            } 
+ 
+            50% { 
+                transform: 
+                    translate(-50%, -50%) 
+                    rotate(calc(360deg / var(--total-items) * var(--i))) 
+                    translateX(calc(var(--radius) * 0.9)) 
+                    rotate(calc(-1 * (360deg / var(--total-items) * var(--i) - 90deg))); 
+            } 
+        } 
+ 
+ 
+        @media (max-width: 768px) { 
+            .orbit { 
+                width: 400px; 
+                height: 400px; 
+            } 
+ 
+            .orbit-item { 
+                --radius: 150px; 
+            } 
+        } 
+ 
+        #video-container { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh; 
+            background: #ffffff; 
+            z-index: 1000; 
+        } 
+ 
+        .main-wrapper { 
+            display: flex; 
+            gap: 2rem; 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 2rem; 
+            height: 100vh; 
+        } 
+ 
+        .profile-card { 
+            background: rgba(var(--primary-color), 0.1); 
+            border-radius: 15px; 
+            padding: 2rem; 
+            margin-bottom: 2rem; 
+            backdrop-filter: blur(10px); 
+            position: relative; 
+        } 
+ 
+        .avatar { 
+            width: 150px; 
+            height: 150px; 
+            border-radius: 50%; 
+            animation: float 3s ease-in-out infinite; 
+        } 
+    </style> 
+</head> 
 
 <body>
     <div id="video-container" style="display: none;">
@@ -427,17 +439,28 @@
             </div>
             <div class="masonry-gallery">
                 <div class="masonry-item"><img src="photo1.jpg" alt="Gallery 1"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827edfe58cb8da5c8f7ba92.jpg" alt="Gallery 2"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee1558cb8da5c8f7ba96.jpg" alt="Gallery 3"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee2058cb8da5c8f7ba9b.jpg" alt="Gallery 4"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee2b58cb8da5c8f7baa2.jpg" alt="Gallery 5"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee3658cb8da5c8f7baa7.jpg" alt="Gallery 6"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee3f58cb8da5c8f7baae.jpg" alt="Gallery 14"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee4c58cb8da5c8f7bab4.jpg" alt="Gallery 13"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee5758cb8da5c8f7babc.jpg" alt="Gallery 10"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee6258cb8da5c8f7babd.png" alt="Gallery 7"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee6d58cb8da5c8f7bac6.jpg" alt="Gallery 8"></div>
-                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee7858cb8da5c8f7bac7.jpg" alt="Gallery 11"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827edfe58cb8da5c8f7ba92.jpg"
+                        alt="Gallery 2"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee1558cb8da5c8f7ba96.jpg"
+                        alt="Gallery 3"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee2058cb8da5c8f7ba9b.jpg"
+                        alt="Gallery 4"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee2b58cb8da5c8f7baa2.jpg"
+                        alt="Gallery 5"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee3658cb8da5c8f7baa7.jpg"
+                        alt="Gallery 6"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee3f58cb8da5c8f7baae.jpg"
+                        alt="Gallery 14"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee4c58cb8da5c8f7bab4.jpg"
+                        alt="Gallery 13"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee5758cb8da5c8f7babc.jpg"
+                        alt="Gallery 10"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee6258cb8da5c8f7babd.png"
+                        alt="Gallery 7"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee6d58cb8da5c8f7bac6.jpg"
+                        alt="Gallery 8"></div>
+                <div class="masonry-item"><img src="https://pic1.imgdb.cn/item/6827ee7858cb8da5c8f7bac7.jpg"
+                        alt="Gallery 11"></div>
                 <div class="masonry-item"><img src="photo15.jpg" alt="Gallery 15"></div>
                 <div class="masonry-item"><img src="photo16.jpg" alt="Gallery 16"></div>
             </div>
@@ -448,28 +471,54 @@
         <div class="circular-container">
             <img src="avatar.webp" alt="Avatar" class="center-avatar">
             <div class="orbit">
-                <div class="orbit-item" style="--i: 0">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 0" alt="AE">
+                <div class="orbit-item" style="--i:0">
+                    <img src="ae-icon.png" class="tech-icon" alt="AE">
                 </div>
-                <div class="orbit-item" style="--i: 1">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 1" alt="PR">
+                <div class="orbit-item" style="--i:1">
+                    <img src="pr-icon.png" class="tech-icon" alt="PR">
                 </div>
-                <div class="orbit-item" style="--i: 2">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 2" alt="Python">
+                <div class="orbit-item" style="--i:2">
+                    <img src="python-icon.png" class="tech-icon" alt="Python">
                 </div>
-                <div class="orbit-item" style="--i: 3">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 3" alt="HTML">
+                <div class="orbit-item" style="--i:3">
+                    <img src="html-icon.png" class="tech-icon" alt="HTML">
                 </div>
-                <div class="orbit-item" style="--i: 4">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 4" alt="CSS">
+                <div class="orbit-item" style="--i:4">
+                    <img src="css-icon.png" class="tech-icon" alt="CSS">
                 </div>
-                <div class="orbit-item" style="--i: 5">
-                    <img src="ae-icon.png" class="tech-icon" style="--idx: 5" alt="JavaScript">
+                <div class="orbit-item" style="--i:5">
+                    <img src="js-icon.png" class="tech-icon" alt="JavaScript">
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        CSS.registerProperty({
+            name: '--sin',
+            syntax: '<number>',
+            initialValue: 0,
+            inherits: false
+        });
+
+        CSS.registerProperty({
+            name: '--cos',
+            syntax: '<number>',
+            initialValue: 1,
+            inherits: false
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const items = document.querySelectorAll('.orbit-item');
+            items.forEach(item => {
+                const i = item.style.getPropertyValue('--i');
+                const angle = (360 / items.length) * i;
+
+                item.style.setProperty('--sin', Math.sin(angle * Math.PI / 180));
+                item.style.setProperty('--cos', Math.cos(angle * Math.PI / 180));
+            });
+        });
+    </script>
     <script>
         const video = document.getElementById('intro-video');
         const videoContainer = document.getElementById('video-container');
