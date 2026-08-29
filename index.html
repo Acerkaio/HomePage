@@ -1,420 +1,472 @@
-<!DOCTYPE html> 
-<html lang="en"> 
- 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Acerkaio's Portfolio</title> 
-    <script src="https://unpkg.com/css-doodle@0.14.2/css-doodle.min.js"></script>  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">  
-    <style> 
-        :root { 
-            --primary-color: #2c3e50; 
-            --secondary-color: #675fd4; 
-            --bg-color: #ffffff; 
-            --text-color: #333333; 
-            --gutter: 15px; 
-        } 
- 
-        .dark-mode { 
-            --bg-color: #1a1a1a; 
-            --text-color: #ffffff; 
-            --primary-color: #968fff; 
-            --secondary-color: #7a99ff; 
-        } 
- 
-        * { 
-            transition: all 0.3s ease; 
-            box-sizing: border-box; 
-        } 
- 
-        body { 
-            margin: 0; 
-            overflow: hidden; 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-color); 
-        } 
- 
-        .page { 
-            position: fixed; 
-            width: 100%; 
-            height: 100vh; 
-            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1); 
-            background-color: var(--bg-color); 
-            overflow: hidden; 
-        } 
- 
-        #page1 { 
-            transform: translateY(0); 
-            z-index: 2; 
-        } 
- 
-        #page2 { 
-            transform: translateY(100%); 
-            z-index: 1; 
-            padding: 2rem; 
-        } 
- 
-        #video-container { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background: #ffffff; 
-            z-index: 1000; 
-        } 
- 
-        .main-wrapper { 
-            display: flex; 
-            gap: 2rem; 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            padding: 2rem; 
-            height: 100vh; 
-        } 
- 
-        #main-content { 
-            opacity: 1; 
-            transform: translateY(0); 
-            flex: 4; 
-        } 
- 
-        .profile-card { 
-            background: rgba(var(--primary-color), 0.1); 
-            border-radius: 15px; 
-            padding: 2rem; 
-            margin-bottom: 2rem; 
-            backdrop-filter: blur(10px); 
-            position: relative; 
-        } 
- 
-        .project-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-            gap: 2rem; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            opacity: 0; 
-            transform: translateY(50px); 
-            transition: all 0.8s ease; 
-            padding: 20px; 
-        } 
- 
-        .project-grid.visible  { 
-            opacity: 1; 
-            transform: translateY(0); 
-        } 
- 
-        .page-up-main { 
-            transform: translateY(0) !important; 
-        } 
- 
-        .project-card { 
-            background: rgba(var(--primary-color), 0.05); 
-            border-radius: 20px; 
-            padding: 2rem; 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(var(--primary-color), 0.1); 
-            transform: scale(0.95); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            cursor: pointer; 
-            position: relative; 
-        } 
- 
-        .project-card:hover { 
-            transform: scale(1); 
-            box-shadow: 0 15px 30px rgba(var(--primary-color), 0.1); 
-        } 
- 
-        .project-card::before { 
-            content: ''; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            bottom: 0; 
-            border-radius: 20px; 
-            border: 2px solid transparent; 
-            background: linear-gradient(45deg, 
-                    rgba(var(--primary-color), 0.3), 
-                    rgba(var(--secondary-color), 0.1)) border-box; 
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) padding-box, 
-                linear-gradient(#fff 0 0); 
-            mask: 
-                linear-gradient(#fff 0 0) padding-box, 
-                linear-gradient(#fff 0 0); 
-            -webkit-mask-composite: xor; 
-            mask-composite: exclude; 
-        } 
- 
-        .masonry-gallery { 
-            flex: 6; 
-            height: calc(100vh - 4rem); 
-            overflow-y: auto; 
-            padding-right: 1rem; 
-            column-count: 3; 
-            column-gap: var(--gutter); 
-        } 
- 
-        .masonry-item { 
-            break-inside: avoid; 
-            margin-bottom: var(--gutter); 
-            position: relative; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            transform: scale(0.98); 
-            transition: transform 0.3s, box-shadow 0.3s; 
-        } 
- 
-        .masonry-item:hover { 
-            transform: scale(1); 
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); 
-        } 
- 
-        .masonry-item img { 
-            width: 100%; 
-            height: auto; 
-            border-radius: 12px; 
-            display: block; 
-        } 
- 
-        .social-links a { 
-            color: var(--secondary-color); 
-            text-decoration: none; 
-            margin: 0 1rem; 
-            position: relative; 
-        } 
- 
-        .social-links a::after { 
-            content: ''; 
-            position: absolute; 
-            width: 0; 
-            height: 2px; 
-            bottom: -5px; 
-            left: 0; 
-            background: var(--secondary-color); 
-            transition: width 0.3s; 
-        } 
- 
-        .social-links a:hover::after { 
-            width: 100%; 
-        } 
- 
-        .control-buttons { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            display: flex; 
-            gap: 10px; 
-            z-index: 999; 
-        } 
- 
-        button { 
-            padding: 8px 16px; 
-            border: none; 
-            border-radius: 25px; 
-            background: var(--primary-color); 
-            color: white; 
-            cursor: pointer; 
-        } 
- 
-        @keyframes float { 
-            0% { 
-                transform: translateY(0px); 
-            } 
- 
-            50% { 
-                transform: translateY(-20px); 
-            } 
- 
-            100% { 
-                transform: translateY(0px); 
-            } 
-        } 
- 
-        .avatar { 
-            width: 150px; 
-            height: 150px; 
-            border-radius: 50%; 
-            animation: float 3s ease-in-out infinite; 
-        } 
- 
-        .page-up { 
-            transform: translateY(-100%) !important; 
-        } 
- 
-        .page-down { 
-            transform: translateY(100%) !important; 
-        } 
- 
-        @media (max-width: 1200px) { 
-            .main-wrapper { 
-                flex-direction: column; 
-            } 
- 
-            .masonry-gallery { 
-                column-count: 2; 
-            } 
- 
-            .project-grid { 
-                grid-template-columns: repeat(2, 1fr); 
-            } 
-        } 
- 
-        @media (max-width: 768px) { 
-            .masonry-gallery { 
-                column-count: 1; 
-            } 
- 
-            .project-grid { 
-                grid-template-columns: 1fr; 
-                padding: 10px; 
-            } 
-        } 
- 
-        .circular-container { 
-            position: relative; 
-            width: 100%; 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            overflow: hidden; 
-        } 
- 
-        .center-avatar { 
-            width: 200px; 
-            height: 200px; 
-            border-radius: 50%; 
-            border: 3px solid var(--secondary-color); 
-            box-shadow: 0 0 30px rgba(var(--secondary-color), 0.4); 
-            z-index: 2; 
-            position: relative; 
-        } 
- 
-        .orbit { 
-            position: absolute; 
-            width: 600px; 
-            height: 600px; 
-            animation: orbit-rotate 20s linear infinite; 
-        } 
- 
-        .orbit-item { 
-            --total-items: 6; 
-            --radius: 250px; 
-            position: absolute; 
-            width: 60px; 
-            height: 60px; 
- 
-            left: 50%; 
-            top: 50%; 
-            transform: 
-                translate(-50%, -50%) 
-                rotate(calc(360deg / var(--total-items) * var(--i))) 
-                translateX(var(--radius)) 
-                rotate(calc(-1 * (360deg / var(--total-items) * var(--i)) - 90deg)); 
- 
-            animation: icon-float 3s ease-in-out infinite; 
-        } 
- 
- 
-        .tech-icon { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; 
-            filter: drop-shadow(0 0 5px var(--secondary-color)); 
-            transition: all 0.3s ease; 
-        } 
- 
-        .tech-icon:hover { 
-            transform: scale(1.2) rotate(15deg); 
-            filter: drop-shadow(0 0 15px var(--secondary-color)); 
-        } 
- 
-        @keyframes orbit-rotate { 
-            from { 
-                transform: rotate(0deg); 
-            } 
- 
-            to { 
-                transform: rotate(360deg); 
-            } 
-        } 
- 
-        @keyframes icon-float { 
-            0%, 100% { 
-                transform: 
-                    translate(-50%, -50%) 
-                    rotate(calc(360deg / var(--total-items) * var(--i))) 
-                    translateX(var(--radius)) 
-                    rotate(calc(-1 * (360deg / var(--total-items) * var(--i) - 90deg))); 
-            } 
- 
-            50% { 
-                transform: 
-                    translate(-50%, -50%) 
-                    rotate(calc(360deg / var(--total-items) * var(--i))) 
-                    translateX(calc(var(--radius) * 0.9)) 
-                    rotate(calc(-1 * (360deg / var(--total-items) * var(--i) - 90deg))); 
-            } 
-        } 
- 
- 
-        @media (max-width: 768px) { 
-            .orbit { 
-                width: 400px; 
-                height: 400px; 
-            } 
- 
-            .orbit-item { 
-                --radius: 150px; 
-            } 
-        } 
- 
-        #video-container { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100vw; 
-            height: 100vh; 
-            background: #ffffff; 
-            z-index: 1000; 
-        } 
- 
-        .main-wrapper { 
-            display: flex; 
-            gap: 2rem; 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            padding: 2rem; 
-            height: 100vh; 
-        } 
- 
-        .profile-card { 
-            background: rgba(var(--primary-color), 0.1); 
-            border-radius: 15px; 
-            padding: 2rem; 
-            margin-bottom: 2rem; 
-            backdrop-filter: blur(10px); 
-            position: relative; 
-        } 
- 
-        .avatar { 
-            width: 150px; 
-            height: 150px; 
-            border-radius: 50%; 
-            animation: float 3s ease-in-out infinite; 
-        } 
-    </style> 
-</head> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acerkaio · Home</title>
+  <meta name="description" content="Personal homepage of Acerkaio — developer, creator, lifelong learner." />
+  <style>
+    :root {
+      --text: #1f2430;
+      --muted: #5b6472;
+      --accent: #5b7cfa;
+      --accent-2: #8b5cf6;
+      --card-bg: rgba(255, 255, 255, 0.38);
+      --card-border: rgba(255, 255, 255, 0.55);
+      --bg: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 40%, #dbeafe 100%);
+      --switch-bg: rgba(255, 255, 255, 0.45);
+      --switch-active-bg: rgba(255, 255, 255, 0.95);
+    }
 
+    html[data-theme="dark"] {
+      --text: #e7eaf2;
+      --muted: #98a1b3;
+      --accent: #7d97ff;
+      --accent-2: #a78bfa;
+      --card-bg: rgba(26, 30, 41, 0.55);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --bg: linear-gradient(135deg, #10151f 0%, #1a1f2b 40%, #171a2e 100%);
+      --switch-bg: rgba(255, 255, 255, 0.08);
+      --switch-active-bg: rgba(255, 255, 255, 0.18);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+      position: relative;
+      background: var(--bg);
+      transition: background 0.4s ease;
+    }
+
+    /* Ambient colorful blobs behind the glass */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.7;
+      z-index: 0;
+      animation: drift 16s ease-in-out infinite alternate;
+    }
+
+    .blob--1 {
+      width: 380px;
+      height: 380px;
+      background: #a5b4fc;
+      top: -120px;
+      left: -80px;
+    }
+
+    .blob--2 {
+      width: 420px;
+      height: 420px;
+      background: #f0abfc;
+      bottom: -160px;
+      right: -100px;
+      animation-delay: -6s;
+    }
+
+    .blob--3 {
+      width: 320px;
+      height: 320px;
+      background: #7dd3fc;
+      top: 55%;
+      left: 55%;
+      animation-delay: -11s;
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        transform: translate(40px, -30px) scale(1.12);
+      }
+    }
+
+    /* Frosted glass card */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      padding: 56px 44px 48px;
+      text-align: center;
+      border-radius: 28px;
+      background: var(--card-bg);
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid var(--card-border);
+      box-shadow:
+        0 24px 60px rgba(31, 36, 48, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      display: block;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 26px rgba(31, 36, 48, 0.22);
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .handle {
+      margin-top: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .tagline {
+      margin-top: 18px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 30px;
+      padding: 14px 30px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 28px rgba(91, 124, 250, 0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn:hover {
+      box-shadow: 0 18px 34px rgba(91, 124, 250, 0.45);
+    }
+
+    .btn svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.18s ease;
+    }
+
+    .btn:hover svg {
+      transform: translateX(4px);
+    }
+
+    .socials {
+      margin-top: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .social {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid var(--card-border);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .social svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .social:hover {
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 22px rgba(31, 36, 48, 0.15);
+    }
+
+    /* Theme switcher */
+    .theme-switch {
+      display: inline-flex;
+      gap: 4px;
+      margin-top: 26px;
+      padding: 4px;
+      border-radius: 999px;
+      background: var(--switch-bg);
+      border: 1px solid var(--card-border);
+    }
+
+    .theme-btn {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      padding: 7px 16px;
+      border-radius: 999px;
+      transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .theme-btn:hover {
+      color: var(--text);
+    }
+
+    .theme-btn.active {
+      background: var(--switch-active-bg);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(31, 36, 48, 0.12);
+    }
+
+    /* Dark mode refinements */
+    html[data-theme="dark"] .blob {
+      opacity: 0.35;
+    }
+
+    html[data-theme="dark"] .card {
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    html[data-theme="dark"] .avatar {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.18);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+    }
+
+    html[data-theme="dark"] .social {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    html[data-theme="dark"] .social:hover {
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 18px;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      opacity: 0.85;
+    }
+
+    footer a,
+    .copy-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .copy-link {
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 82px;
+      transform: translateX(-50%) translateY(12px);
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: rgba(31, 36, 48, 0.86);
+      color: #fff;
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 10;
+      box-shadow: 0 10px 24px rgba(31, 36, 48, 0.25);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .blob {
+        animation: none;
+      }
+      .btn,
+      .social,
+      .toast,
+      .theme-btn {
+        transition: none;
+      }
+    }
+  </style>
+</head>
 <body>
-    建设中。
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+  <div class="blob blob--3"></div>
 
-    <a href="https://homepage.acerkaio.top/">wip</a>
+  <main class="card">
+    <img class="avatar" src="https://cdn.luogu.com.cn/upload/image_hosting/09fafj4n.png" alt="Acerkaio's avatar" />
+    <h1>Acerkaio</h1>
+    <div class="handle">@aqieerkaiao</div>
+    <p class="tagline">
+      High school student.<br />
+      Yuri is peak.
+    </p>
+    <a class="btn" href="https://blog.acerkaio.top/" target="_blank" rel="noopener noreferrer">
+      Visit My Blog
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14" />
+        <path d="M13 6l6 6-6 6" />
+      </svg>
+    </a>
+
+    <div class="socials">
+      <a class="social" href="https://github.com/Acerkaio" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+        </svg>
+      </a>
+      <button class="social" type="button" data-copy="2607795682" aria-label="Copy QQ number: 2607795682" title="Copy QQ: 2607795682">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M21.395 15.035a40 40 0 0 0-.803-2.264l-1.079-2.695c.001-.032.014-.562.014-.836C19.526 4.632 17.351 0 12 0S4.474 4.632 4.474 9.241c0 .274.013.804.014.836l-1.08 2.695a39 39 0 0 0-.802 2.264c-1.021 3.283-.69 4.643-.438 4.673.54.065 2.103-2.472 2.103-2.472 0 1.469.756 3.387 2.394 4.771-.612.188-1.363.479-1.845.835-.434.32-.379.646-.301.778.343.578 5.883.369 7.482.189 1.6.18 7.14.389 7.483-.189.078-.132.132-.458-.301-.778-.483-.356-1.233-.646-1.846-.836 1.637-1.384 2.393-3.302 2.393-4.771 0 0 1.563 2.537 2.103 2.472.251-.03.581-1.39-.438-4.673" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="theme-switch" role="group" aria-label="Theme">
+      <button class="theme-btn" type="button" data-theme-choice="light">Light</button>
+      <button class="theme-btn" type="button" data-theme-choice="dark">Dark</button>
+      <button class="theme-btn" type="button" data-theme-choice="system">System</button>
+    </div>
+  </main>
+
+  <footer>
+    &copy; <span id="year"></span> Acerkaio ·
+    <a href="https://blog.acerkaio.top/" target="_blank" rel="noopener noreferrer">blog.acerkaio.top</a> ·
+    <button class="copy-link" type="button" data-copy="2607795682" title="Copy QQ number">QQ 2607795682</button>
+    <br />
+    Avatar: <a href="https://www.pixiv.net/artworks/87011701" target="_blank" rel="noopener noreferrer">Pixiv #87011701</a>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    let toastTimer;
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise((resolve, reject) => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          resolve();
+        } catch (err) {
+          reject(err);
+        } finally {
+          document.body.removeChild(textarea);
+        }
+      });
+    }
+
+    document.querySelectorAll("[data-copy]").forEach((el) => {
+      el.addEventListener("click", () => {
+        copyText(el.dataset.copy).then(() => {
+          showToast("QQ number copied: " + el.dataset.copy);
+        });
+      });
+    });
+
+    // Theme switcher: light / dark / system (persisted)
+    const THEME_KEY = "theme";
+
+    function getThemePreference() {
+      return localStorage.getItem(THEME_KEY) || "system";
+    }
+
+    function applyTheme(preference) {
+      const resolved =
+        preference === "system"
+          ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light"
+          : preference;
+      document.documentElement.setAttribute("data-theme", resolved);
+      document.querySelectorAll(".theme-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.themeChoice === preference);
+      });
+      localStorage.setItem(THEME_KEY, preference);
+    }
+
+    applyTheme(getThemePreference());
+
+    document.querySelectorAll(".theme-btn").forEach((btn) => {
+      btn.addEventListener("click", () => applyTheme(btn.dataset.themeChoice));
+    });
+
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", () => {
+        if (getThemePreference() === "system") {
+          applyTheme("system");
+        }
+      });
+  </script>
 </body>
-
 </html>
